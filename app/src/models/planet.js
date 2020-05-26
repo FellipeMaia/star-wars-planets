@@ -26,7 +26,7 @@ function save(params){
     })
     .catch(err=>{
         if(err){
-            console.error(err);
+            //console.error(err);
             return {
                 mansagem: "Não foi possivel salvar o planeta!",
                 erro: err

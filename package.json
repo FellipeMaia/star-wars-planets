@@ -5,7 +5,8 @@
   "main": "./app/index.js",
   "scripts": {
     "start": "nodemon app/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon app/index.js --ignore __test__",
+    "test": "TEST='true' jest"
   },
   "repository": {
     "type": "git",
@@ -28,5 +29,9 @@
     "express-session": "^1.17.1",
     "mongoose": "^5.9.16",
     "uuid": "^8.1.0"
+  },
+  "devDependencies": {
+    "jest": "^26.0.1",
+    "supertest": "^4.0.2"
   }
 }

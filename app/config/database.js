@@ -28,9 +28,12 @@ prop = {
 }
 
 module.exports.startConnction =  async function(){
-    await mongoose.connect(prop.getUrl()).then((val)=>{
+    let url = prop.getUrl();
+    if(process.env.TEST = 'true')
+        url = `mongodb://localhost/test`;
+    await mongoose.connect(url).then((val)=>{
         console.log('iniciado a conexão');
-        //console.log(val);
+        console.log(val.connections[0].host+':'+ val.connections[0].port+'/'+val.connections[0].name);
     }).catch(err=>{
         if(err){
             console.error(err);
