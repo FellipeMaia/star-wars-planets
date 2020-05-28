@@ -1,4 +1,5 @@
 const {planet} = require('../models/planet');
+const APIPlanet = require('./controllerAPIplanet');
 
 module.exports.post = function(req,res){
     const {nome,terreno,clima} = req.body;
@@ -11,22 +12,47 @@ module.exports.post = function(req,res){
 
 
 module.exports.getAll = function(req,res){
-    planet.getAll().then(val=>{
-        res.json(val);
+    planet.getAll().then(async val=>{
+        if(Array.isArray(val)){
+            const results = [];
+            for(let i=0;i<val.length;i++){
+                const result = JSON.parse(JSON.stringify(val[i]));
+                result['films'] = (await APIPlanet.getInformacaoPlanta(result.nome)).films;
+                results.push(result);
+            };
+            res.json(results);
+        }else{
+            res.json(val);
+        }
+        
     })
 }
 
 module.exports.getById = function(req,res){
     const {id} = req.params;
-    planet.getById(id).then(val=>{
-        res.json(val);
+    planet.getById(id).then(async val=>{
+        const result = JSON.parse(JSON.stringify(val));
+        if(result._id){
+            result.films = (await APIPlanet.getInformacaoPlanta(result.nome)).films;
+        }
+        res.json(result);
     })
 }
 
 module.exports.getByNome = function(req,res){
     const {nome} = req.params;
-    planet.getByNome(nome).then(val=>{
-        res.json(val);
+    planet.getByNome(nome).then(async val=>{
+        if(Array.isArray(val)){
+            const results = [];
+            for(let i=0;i<val.length;i++){
+                const result = JSON.parse(JSON.stringify(val[i]));
+                result['films'] = (await APIPlanet.getInformacaoPlanta(result.nome)).films;
+                results.push(result);
+            };
+            res.json(results);
+        }else{
+            res.json(val);
+        }
     })
 }
 

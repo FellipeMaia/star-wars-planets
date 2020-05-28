@@ -12,7 +12,7 @@ const planetModel = mongoose.model("planet",planet);
 module.exports.planetModel = planetModel;
 
 function save(params){
-    return planetModel.findOne(params).then(val=>{
+    return planetModel.findOne({nome:params.nome}).then(val=>{
         if(!val){
             return planetModel(params).save()
             .then(retorno=>{

@@ -129,5 +129,26 @@ describe("Metodo save do modulo Planet",()=>{
     });
 
 
+    it('vai verificar se retorna erro quando tenta salvar objetos somente os nomes iguais no banco', async done=>{
+        const parms = {
+            nome: "teste31",
+            terreno: "teste8888",
+            clima: "teste777"
+        }   
+
+        const retorno = await planet.save(parms);
+
+        if(retorno._id){
+            planets.obj.push(JSON.parse(JSON.stringify(retorno)));
+        }
+
+        console.log(retorno);
+        
+        expect(retorno.mansagem).toBe("O planeta já esta salvo!");
+        
+        done();
+    });
+
+
 
 });

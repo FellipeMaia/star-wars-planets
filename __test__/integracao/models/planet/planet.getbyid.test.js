@@ -48,6 +48,7 @@ it('vai verificar o retorno de planet filtando por _ID quando esta vazio', async
     expect(id).not.toBe(expected._id);
     const received =  JSON.parse(JSON.stringify(await planet.getById(id)));
 
+    expect(received.films).toBe(undefined);
     expect(received.mansagem).toBe("Não há planeta com o _id: "+id);
 
     done();
