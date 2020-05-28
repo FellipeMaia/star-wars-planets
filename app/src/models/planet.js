@@ -26,7 +26,6 @@ function save(params){
     })
     .catch(err=>{
         if(err){
-            //console.error(err);
             return {
                 mansagem: "Não foi possivel salvar o planeta!",
                 erro: err
@@ -35,4 +34,90 @@ function save(params){
     });
     
 }
-module.exports.planet = {save}
+
+function getAll(){
+    return planetModel.find({})
+        .then(val=>{
+            if(!!val && val.length>0){
+                return val;
+            }else{
+                return {mansagem:'Não há planeta!'};
+            }
+        }).catch(err=>{
+            if(err){
+                return {
+                    mansagem: "Não foi possivel recuperar os planetas!",
+                    erro: err
+                };
+            }
+        })
+}
+
+function getById(id){
+    return planetModel.findOne({'_id':id})
+        .then(val=>{
+            if(!val){
+                return {mansagem:'Não há planeta com o _id: '+id};
+            }
+            return val;
+        }).catch(err=>{
+            if(err){
+                return {
+                    mansagem: "Não foi possivel recuperar o planeta!",
+                    erro: err
+                };
+            }
+        });;
+}
+
+function getByNome(nome){
+
+    //'__v _id nome clima terreno'
+    return planetModel.find({'nome':nome},'')
+        .then(val=>{
+            if(!val || val.length === 0){
+                return {mansagem:'Não há planeta com o nome: '+nome};
+            }
+            return val;
+        }).catch(err=>{
+            if(err){
+                return {
+                    mansagem: "Não foi possivel recuperar o planeta!",
+                    erro: err
+                };
+            }
+        });;
+}
+
+function remove(id){
+
+    //'__v _id nome clima terreno'
+    return planetModel.findByIdAndDelete(id)
+        .then(val=>{
+            if(!val || val.length === 0){
+                return {mansagem:'Não há planeta com o nome: '+id};
+            }
+            return val;
+        }).catch(err=>{
+            if(err){
+                return {
+                    mansagem: "Não foi possivel remove o planeta!",
+                    erro: err
+                };
+            }
+        });;
+}
+
+// function findOne(params){
+//     return planetModel.findOne(params).exec()
+//         .catch(err=>{
+//             if(err){
+//                 return {
+//                     mansagem: "Não foi possivel recuperar o planeta!",
+//                     erro: err
+//                 };
+//             }
+//         });
+// }
+
+module.exports.planet = {save,getAll,getById,getByNome,remove}

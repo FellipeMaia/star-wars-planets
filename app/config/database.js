@@ -1,8 +1,5 @@
 const mongoose = require('mongoose');
 
-//User UserDBStarWars
-//passwd 5oS9z4wohZXQaCfF
-
 prop = {
     USER: process.env.USER_SIS,
     PASSWD: process.env.PASSWD,
@@ -22,18 +19,23 @@ prop = {
     },
     //'mongodb+srv://UserDBStarWars:<password>@cluster0-7lt1z.mongodb.net/test?retryWrites=true&w=majority',
     getUrl: function(){
-        //return `mongodb://localhost/my_database`
         return `mongodb+srv://${this.USER}:${this.PASSWD}@${this.CLUSTER}.mongodb.net/${this.dataBase}?${this.params.getParams()}`
     }
 }
 
-module.exports.startConnction =  async function(){
-    let url = prop.getUrl();
-    if(process.env.TEST = 'true')
-        url = `mongodb://localhost/test`;
-    await mongoose.connect(url).then((val)=>{
-        console.log('iniciado a conexão');
-        console.log(val.connections[0].host+':'+ val.connections[0].port+'/'+val.connections[0].name);
+ function initConection(url){
+
+    const mongooseOpts = {
+        useNewUrlParser: true,
+        autoReconnect: true,
+        reconnectTries: Number.MAX_VALUE,
+        reconnectInterval: 1000
+    };
+
+    return  mongoose.connect(url,mongooseOpts).then((val)=>{
+        console.log(
+            `iniciado a conexão\n${val.connections[0].host}:${val.connections[0].port}/${val.connections[0].name}`
+        );
     }).catch(err=>{
         if(err){
             console.error(err);
@@ -41,5 +43,23 @@ module.exports.startConnction =  async function(){
         }
     })
 }
+
+if(process.env.TEST === 'true'){
+    /**
+     * @param dataBase :defini o database que será gravado, valor obrigatorio!
+     */
+    module.exports.startConnction =  async function(url){
+        if(url){
+            //url = `mongodb://localhost:27017/${dataBase}`
+            await initConection(url);
+        }
+    }
+}else{
+    module.exports.startConnction =  async function(){
+        let url = prop.getUrl();
+        await initConection(url);
+    }
+}
+
 
 module.exports.mongoose = mongoose;
