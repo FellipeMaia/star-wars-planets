@@ -43,7 +43,7 @@ describe("Teste de Rota",()=>{
         const parms = {"nome": "Ord Mantell","terreno": "plains, seas, mesas","clima": "temperate"}
         
         const retorno = await request(app)
-        .post('/planet/save/')
+        .post('/planet/')
         .set('Content-Type','application/json; charset=utf-8')
         .send(parms);
 
@@ -95,12 +95,12 @@ describe("Teste de Rota",()=>{
 
     });
 
-    it('vai testar a rota /planet/:id utilizado o metodo get', async done=>{
+    it('vai testar a rota /planet/id/:id utilizado o metodo get', async done=>{
         
         planets.obj[0].films = planets.result[0].films;
 
         const received = await request(app)
-        .get(`/planet/${planets.obj[0]._id}/`)
+        .get(`/planet/id/${planets.obj[0]._id}/`)
         .set('Content-Type','application/json; charset=utf-8')
         .send();
 
@@ -111,7 +111,7 @@ describe("Teste de Rota",()=>{
 
     });
 
-    it('vai testar a rota /planet/:id utilizado o metodo get, com o retorno da mensagem "Não há planeta com o _id:"', async done=>{
+    it('vai testar a rota /planet/id/:id utilizado o metodo get, com o retorno da mensagem "Não há planeta com o _id:"', async done=>{
         
         const expected = planets.obj[0];
 
@@ -119,7 +119,7 @@ describe("Teste de Rota",()=>{
         console.log(id+'\n'+expected._id);
 
         const received = await request(app)
-        .get(`/planet/${id}/`)
+        .get(`/planet/id/${id}/`)
         .set('Content-Type','application/json; charset=utf-8')
         .send();
 
@@ -137,7 +137,7 @@ describe("Teste de Rota",()=>{
         planets.obj[0].films = planets.result[0].films;
 
         const received = await request(app)
-        .get(`/planet/name/${planets.obj[0].nome}/`)
+        .get(`/planet/nome/${planets.obj[0].nome}/`)
         .set('Content-Type','application/json; charset=utf-8')
         .send();
 
@@ -152,7 +152,7 @@ describe("Teste de Rota",()=>{
     it('vai testar a rota /planet/nome/:nome utilizado o metodo get, com o retorno da mensagem "Não há planeta com o nome:"', async done =>{
 
         const received = await request(app)
-        .get(`/planet/name/Ord Mantell/`)
+        .get(`/planet/nome/Ord Mantell/`)
         .set('Content-Type','application/json; charset=utf-8')
         .send();
 
@@ -164,9 +164,9 @@ describe("Teste de Rota",()=>{
 
     });
 
-    it('vai testar a rota /planet/:id/delete utilizado o metodo delete', async done =>{
+    it('vai testar a rota /planet/:id/ utilizado o metodo delete', async done =>{
         const received = await request(app)
-        .delete(`/planet/${planets.obj[0]._id}/delete`)
+        .delete(`/planet/${planets.obj[0]._id}/`)
         .set('Content-Type','application/json; charset=utf-8')
         .send();
 

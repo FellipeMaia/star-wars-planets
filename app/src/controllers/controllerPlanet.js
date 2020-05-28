@@ -31,10 +31,11 @@ module.exports.getAll = function(req,res){
 module.exports.getById = function(req,res){
     const {id} = req.params;
     planet.getById(id).then(async val=>{
-        const result = JSON.parse(JSON.stringify(val));
-        if(result._id){
-            result.films = (await APIPlanet.getInformacaoPlanta(result.nome)).films;
+        if(val){
+            res.json(val);
         }
+        const result = JSON.parse(JSON.stringify(val));
+        result.films = (await APIPlanet.getInformacaoPlanta(result.nome)).films;
         res.json(result);
     })
 }
