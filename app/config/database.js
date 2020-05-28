@@ -17,7 +17,10 @@ prop = {
             return par.substr(0,par.length-1);
         }
     },
-    //'mongodb+srv://UserDBStarWars:<password>@cluster0-7lt1z.mongodb.net/test?retryWrites=true&w=majority',
+    /**
+     *  Esta função irá gerar uma string de conexão do mongodb,
+     *  'mongodb+srv://UserDBStarWars:<password>@cluster0-7lt1z.mongodb.net/test?retryWrites=true&w=majority' 
+     */
     getUrl: function(){
         return `mongodb+srv://${this.USER}:${this.PASSWD}@${this.CLUSTER}.mongodb.net/${this.dataBase}?${this.params.getParams()}`
     }
@@ -46,11 +49,10 @@ prop = {
 
 if(process.env.TEST === 'true'){
     /**
-     * @param dataBase :defini o database que será gravado, valor obrigatorio!
+     * @param url Este parametro irá receber uma string de conexão do mongodb
      */
     module.exports.startConnction =  async function(url){
         if(url){
-            //url = `mongodb://localhost:27017/${dataBase}`
             await initConection(url);
         }
     }

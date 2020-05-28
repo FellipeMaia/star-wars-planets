@@ -71,8 +71,6 @@ function getById(id){
 }
 
 function getByNome(nome){
-
-    //'__v _id nome clima terreno'
     return planetModel.find({'nome':nome},'')
         .then(val=>{
             if(!val || val.length === 0){
@@ -90,8 +88,6 @@ function getByNome(nome){
 }
 
 function remove(id){
-
-    //'__v _id nome clima terreno'
     return planetModel.findByIdAndDelete(id)
         .then(val=>{
             if(!val || val.length === 0){
@@ -107,17 +103,5 @@ function remove(id){
             }
         });;
 }
-
-// function findOne(params){
-//     return planetModel.findOne(params).exec()
-//         .catch(err=>{
-//             if(err){
-//                 return {
-//                     mansagem: "Não foi possivel recuperar o planeta!",
-//                     erro: err
-//                 };
-//             }
-//         });
-// }
 
 module.exports.planet = {save,getAll,getById,getByNome,remove}
