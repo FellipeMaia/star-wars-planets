@@ -44,7 +44,8 @@ describe("Metodo getByNome do modulo Planet",()=>{
        
         const received =  JSON.parse(JSON.stringify(await planet.getByNome('teste-not-have')));
 
-        expect(received.mansagem).toBe("Não há planeta com o nome: teste-not-have");
+        expect(received.length).toBe(0);
+        expect(received).toEqual([]);
 
         done();
     });
@@ -55,7 +56,7 @@ describe("Metodo getByNome do modulo Planet",()=>{
         try{
             await planet.getByNome('teste999');
         }catch(received){
-            expect(received.mansagem).toBe("Não foi possivel recuperar o planeta!");
+            expect(received.message).toBe("Não foi possivel localizar o planeta!\n --> MongoError: pool is draining, new operations prohibited");
         }finally{
             await virtual_mongodb.connect();
         }

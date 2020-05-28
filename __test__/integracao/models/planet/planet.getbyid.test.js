@@ -40,7 +40,7 @@ it('vai verificar o retorno de planet filtando por _ID', async done=>{
     done();
 });
 
-it('vai verificar o retorno de planet filtando por _ID quando esta vazio', async done=>{
+it('vai verificar o retorno de planet filtrando por _ID, quando o ID esta invalido', async done=>{
     const expected = planets.obj[0];
 
     const id = expected._id.substring(0,expected._id.length-4)+'7777';
@@ -48,8 +48,7 @@ it('vai verificar o retorno de planet filtando por _ID quando esta vazio', async
     expect(id).not.toBe(expected._id);
     const received =  JSON.parse(JSON.stringify(await planet.getById(id)));
 
-    expect(received.films).toBe(undefined);
-    expect(received.mansagem).toBe("Não há planeta com o _id: "+id);
+    expect(received).toBe(null);
 
     done();
 });
@@ -60,7 +59,7 @@ it('vai verificar o retorno de planet filtando por _ID quando esta retornando er
     try{
         await planet.getById('5ece6ebf1023932fdd984959');
     }catch(received){
-        expect(received.mansagem).toEqual("Não foi possivel recuperar o planeta!");
+        expect(received.message).toEqual("Não foi possivel localizar o planeta!\n --> MongoError: pool is draining, new operations prohibited");
     }finally{
         await virtual_mongodb.connect();
     }

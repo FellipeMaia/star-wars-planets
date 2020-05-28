@@ -46,17 +46,18 @@ describe("Metodo remove do modulo Planet",()=>{
         expect(received).toEqual(expected);
     });
 
-    it('Vai retornar a mensagem indicando que não achou o planet', async done=>{
+    it('Irá retornar a mensagem indicando que o planeta não foi encontrado', async done=>{
         const expected = planets.obj[0];
 
         const id = expected._id.substring(0,expected._id.length-4)+'7777';
         console.log(id+'\n'+expected._id);
 
-        const received = JSON.parse(JSON.stringify(await planet.remove(id)));
-
-        console.log(received);
-
-        expect(received.mansagem).toEqual('Não há planeta com o nome: '+id);
+        try{
+            await planet.remove(expected._id);
+        }catch(received){
+            expect(received.message).toBe("retorno não definido - null");
+        }
+       ('Não há planeta com o nome: '+id);
 
         done()
     });
@@ -68,7 +69,7 @@ describe("Metodo remove do modulo Planet",()=>{
         try{
             await planet.remove(expected._id);
         }catch(received){
-            expect(received.mansagem).toBe("Não foi possivel remove o planeta!");
+            expect(received.message).toBe("Não foi possivel remover o planeta!\n --> MongoError: pool is draining, new operations prohibited");
         }finally{
             await virtual_mongodb.connect();
         }

@@ -55,7 +55,8 @@ describe("Metodo getAll do moulo Planet",()=>{
 
         console.log(retorno);
 
-        expect(retorno.mansagem).toBe('Não há planeta!');
+        expect(retorno.length).toBe(0);
+        expect(retorno).toEqual([]);
 
         done();
 
@@ -66,7 +67,7 @@ describe("Metodo getAll do moulo Planet",()=>{
         try{
             const retorno = await planet.getAll();
         }catch(err){
-            expect(err.mansagem).toBe('Não foi possivel recuperar os planetas!');
+            expect(err.message).toBe("Não foi possivel localizar o planeta!\n --> MongoError: pool is draining, new operations prohibited");
         }finally{
             await virtual_mongodb.connect();
         }

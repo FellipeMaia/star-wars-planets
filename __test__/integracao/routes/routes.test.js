@@ -67,7 +67,7 @@ describe("Teste de Rota",()=>{
         .set('Content-Type','application/json; charset=utf-8')
         .send();
 
-        console.log(planets.obj);
+        console.log(retorno.body);
 
         expect(retorno.statusCode).toBe(200);
         expect(retorno.body).toEqual(planets.obj);
@@ -88,7 +88,8 @@ describe("Teste de Rota",()=>{
         console.log(retorno.body);
 
         expect(retorno.statusCode).toBe(200);
-        expect(retorno.body.mansagem).toEqual('Não há planeta!');
+        expect(retorno.body.length).toEqual(0);
+        expect(retorno.body).toEqual([]);
 
         done()
 
@@ -125,7 +126,7 @@ describe("Teste de Rota",()=>{
         console.log(received.body)
 
         expect(received.statusCode).toBe(200);
-        expect(received.body.mansagem).toBe("Não há planeta com o _id: "+id);
+        expect(received.body).toBe(null);
 
         done()
 
@@ -156,7 +157,8 @@ describe("Teste de Rota",()=>{
         .send();
 
         expect(received.statusCode).toBe(200);
-        expect(received.body.mansagem).toEqual('Não há planeta com o nome: Ord Mantell');
+        expect(received.body.length).toBe(0)
+        expect(received.body).toEqual([]);
 
         done();
 

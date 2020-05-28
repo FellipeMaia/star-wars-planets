@@ -58,13 +58,11 @@ describe("Metodo save do modulo Planet",()=>{
             "clima": "teste23"
         }
 
-        const retorno = await planet.save(parms);
-
-        if(retorno._id){
-            planets.obj.push(JSON.parse(JSON.stringify(retorno)));
+        try{
+            await planet.save(parms);
+        }catch(received){
+            expect(received.message).toBe("Campo(s) invalido!\n --> ValidationError: planet validation failed: nome: Path `nome` is required.");
         }
-        
-        expect(retorno.mansagem).toBe("Não foi possivel salvar o planeta!");
 
         done();        
        
@@ -77,13 +75,11 @@ describe("Metodo save do modulo Planet",()=>{
             "clima": "teste24"
         }
 
-        const retorno = await planet.save(parms);
-
-        if(retorno._id){
-            planets.obj.push(JSON.parse(JSON.stringify(retorno)));
+        try{
+            await planet.save(parms);
+        }catch(received){
+            expect(received.message).toBe("Campo(s) invalido!\n --> ValidationError: planet validation failed: terreno: Path `terreno` is required.");
         }
-        
-        expect(retorno.mansagem).toBe("Não foi possivel salvar o planeta!");
 
         done();
 
@@ -96,13 +92,11 @@ describe("Metodo save do modulo Planet",()=>{
             "clima": ""
         }
 
-        const retorno = await planet.save(parms);
-
-        if(retorno._id){
-            planets.obj.push(JSON.parse(JSON.stringify(retorno)));
+        try{
+            await planet.save(parms);
+        }catch(received){
+            expect(received.message).toBe("Campo(s) invalido!\n --> ValidationError: planet validation failed: clima: Path `clima` is required.");
         }
-        
-        expect(retorno.mansagem).toBe("Não foi possivel salvar o planeta!");
 
         done();
 
@@ -115,15 +109,11 @@ describe("Metodo save do modulo Planet",()=>{
             clima: "teste31"
         }   
 
-        const retorno = await planet.save(parms);
-
-        if(retorno._id){
-            planets.obj.push(JSON.parse(JSON.stringify(retorno)));
+        try{
+            await planet.save(parms);
+        }catch(received){
+            expect(received.message).toBe("O planeta já esta salvo!");
         }
-
-        console.log(retorno);
-        
-        expect(retorno.mansagem).toBe("O planeta já esta salvo!");
         
         done();
     });
@@ -136,19 +126,34 @@ describe("Metodo save do modulo Planet",()=>{
             clima: "teste777"
         }   
 
-        const retorno = await planet.save(parms);
-
-        if(retorno._id){
-            planets.obj.push(JSON.parse(JSON.stringify(retorno)));
+        try{
+            await planet.save(parms);
+        }catch(received){
+            expect(received.message).toBe("O planeta já esta salvo!");
         }
-
-        console.log(retorno);
-        
-        expect(retorno.mansagem).toBe("O planeta já esta salvo!");
         
         done();
     });
 
+
+    it('Vai retornar a mensagem indicando que ocorreu erro', async done=>{
+        const parms = {
+            nome: "teste31",
+            terreno: "teste8888",
+            clima: "teste777"
+        } 
+
+        virtual_mongodb.disconnect();
+        try{
+            await planet.save(parms);
+        }catch(received){
+            expect(received.message).toBe("Não foi possivel salvar o planeta!\n --> MongoError: pool is draining, new operations prohibited");
+        }finally{
+            await virtual_mongodb.connect();
+        }
+        
+        done();
+    });
 
 
 });
