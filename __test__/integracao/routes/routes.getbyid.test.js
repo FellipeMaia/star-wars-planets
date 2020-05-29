@@ -61,14 +61,14 @@ describe("Test of the route /planet/id/:id with methodo get",()=>{
         const expected = planets.obj[0];
 
         const id = expected._id.substring(0,expected._id.length-4)+'7777';
-        console.log(id+'\n'+expected._id);
+        //console.log(id+'\n'+expected._id);
 
         const received = await request(app)
         .get(`/planet/id/${id}/`)
         .set('Content-Type','application/json; charset=utf-8')
         .send();
 
-        console.log(received.body)
+        //console.log(received.body)
 
         expect(received.statusCode).toBe(200);
         expect(received.body.result).toBe(null);

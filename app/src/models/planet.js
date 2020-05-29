@@ -29,7 +29,7 @@ function getAll(limit = 10, page = 1){
     let cont;
     return planetModel.find().count().then(val=>{
                 cont = val;
-                return planetModel.find().skip((limit*page)-limit).limit((limit*page))
+                return planetModel.find().skip((page - 1) * limit).limit(limit)
             }).then(result=>{
                 return {
                             planets: result,

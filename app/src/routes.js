@@ -28,17 +28,17 @@ const controllerPlanet = require('./controllers/controllerPlanet');
  *          schema:
  *             type: object
  *             required:
- *                - nome
- *                - clima
- *                - terreno
+ *                - name
+ *                - climate
+ *                - terrain
  *             properties:
- *                nome:
+ *                name:
  *                   example: "Yavin IV"
  *                   type: String
- *                clima:
+ *                climate:
  *                   example: "temperate, tropical"
  *                   type: String
- *                terreno:
+ *                terrain:
  *                   example: "jungle, rainforests"
  *                   type: String
  *     responses:
@@ -47,25 +47,28 @@ const controllerPlanet = require('./controllers/controllerPlanet');
  *         schema:
  *           type: object
  *           properties:
- *              _id:
- *                 example: "5ece79eb5515b142874ee5c2"
- *                 type: String
- *              nome:
- *                 example: "Yavin IV"
- *                 type: String
- *              clima:
- *                 example: "temperate, tropical"
- *                 type: String
- *              terreno:
- *                 example: "jungle, rainforests"
- *                 type: String
+ *              result:
+ *                  type: "object"
+ *                  properties:
+ *                     _id:
+ *                        example: "5ece79eb5515b142874ee5c2"
+ *                        type: String
+ *                     name:
+ *                        example: "Yavin IV"
+ *                        type: String
+ *                     climate:
+ *                        example: "temperate, tropical"
+ *                        type: String
+ *                     terrain:
+ *                        example: "jungle, rainforests"
+ *                        type: String
  *       405:
  *         description: "Validation exception"
  *         schema:
  *           type: object
  *           properties:
  *              error:
- *                 example: "Campo invalido!\n --> ValidationError: planet validation failed: nome: Path `nome` is required."
+ *                 example: "Campo invalido!\n --> ValidationError: planet validation failed: name: Path `name` is required."
  *                 type: String
  *       500:
  *         description: "Internal Server Error"
@@ -113,21 +116,33 @@ routes.post('/planet/', controllerPlanet.save);
  *         schema:
  *           type: object
  *           properties:
- *              _id:
- *                 example: "5ece79eb5515b142874ee5c2"
- *                 type: String
- *              nome:
- *                 example: "Yavin IV"
- *                 type: String
- *              clima:
- *                 example: "temperate, tropical"
- *                 type: String
- *              terreno:
- *                 example: "jungle, rainforests"
- *                 type: String
- *              filmes:
- *                 example: 1
- *                 type: Integer
+ *              result:
+ *                  type: "array"
+ *                  items:
+ *                     properties:
+ *                        _id:
+ *                           example: "5ece79eb5515b142874ee5c2"
+ *                           type: String
+ *                        name:
+ *                           example: "Yavin IV"
+ *                           type: String
+ *                        climate:
+ *                           example: "temperate, tropical"
+ *                           type: String
+ *                        terrain:
+ *                           example: "jungle, rainforests"
+ *                           type: String
+ *                        filmes:
+ *                           example: 1
+ *                           type: Integer
+ *       405:
+ *         description: "Validation exception"
+ *         schema:
+ *           type: object
+ *           properties:
+ *              error:
+ *                 example: "ConversionError: String com caracteres invalidos para conversão."
+ *                 type: String    
  *       500:
  *         description: "Internal Server Error"
  *         schema:
@@ -135,7 +150,7 @@ routes.post('/planet/', controllerPlanet.save);
  *           properties:
  *              error:
  *                 example: "Não foi possivel salvar o planeta!\n --> MongoError: pool is draining, new operations prohibited"
- *                 type: String    
+ *                 type: String  
  */
 routes.get('/planets/',controllerPlanet.getAll);
 
@@ -160,18 +175,21 @@ routes.get('/planets/',controllerPlanet.getAll);
  *         schema:
  *           type: object
  *           properties:
- *              _id:
- *                 example: 5ece79eb5515b142874ee5c2
- *                 type: String
- *              nome:
- *                 example: Yavin IV
- *                 type: String
- *              clima:
- *                 example: temperate, tropical
- *                 type: String
- *              terreno:
- *                 example: jungle, rainforests
- *                 type: String
+ *              result:
+ *                  type: "object"
+ *                  properties:
+ *                     _id:
+ *                        example: 5ece79eb5515b142874ee5c2
+ *                        type: String
+ *                     name:
+ *                        example: Yavin IV
+ *                        type: String
+ *                     climate:
+ *                        example: temperate, tropical
+ *                        type: String
+ *                     terrain:
+ *                        example: jungle, rainforests
+ *                        type: String
  *       500:
  *         description: "Internal Server Error"
  *         schema:
@@ -186,18 +204,18 @@ routes.get('/planet/id/:id/',controllerPlanet.getById);
 
 /**
  * @swagger
- * /planet/nome/{nome}/:
+ * /planet/name/{name}/:
  *   get:
  *     tags:
  *        - "Planetas"
  *     description: ""
- *     summary: Pesquisar planeta por nome
+ *     summary: Pesquisar planeta por name
  *     produces:
  *      - application/json
  *     parameters:
- *        - name: nome
+ *        - name: name
  *          in: path
- *          description: "nome do planeta.\nexemplo: Yavin IV"
+ *          description: "name do planeta.\nexemplo: Yavin IV"
  *          required: true
  *     responses:
  *       200:
@@ -205,18 +223,21 @@ routes.get('/planet/id/:id/',controllerPlanet.getById);
  *         schema:
  *           type: object
  *           properties:
- *              _id:
- *                 example: 5ed026b598fdd549bf2006f3
- *                 type: String
- *              nome:
- *                 example: Yavin IV
- *                 type: String
- *              clima:
- *                 example: temperate, tropical
- *                 type: String
- *              terreno:
- *                 example: jungle, rainforests
- *                 type: String
+ *              result:
+ *                  type: "object"
+ *                  properties:
+ *                     _id:
+ *                        example: 5ed026b598fdd549bf2006f3
+ *                        type: String
+ *                     name:
+ *                        example: Yavin IV
+ *                        type: String
+ *                     climate:
+ *                        example: temperate, tropical
+ *                        type: String
+ *                     terrain:
+ *                        example: jungle, rainforests
+ *                        type: String
  *       500:
  *         description: "Internal Server Error"
  *         schema:
@@ -226,7 +247,7 @@ routes.get('/planet/id/:id/',controllerPlanet.getById);
  *                 example: "Não foi possivel salvar o planeta!\n --> MongoError: pool is draining, new operations prohibited"
  *                 type: String
  */
-routes.get('/planet/nome/:name/',controllerPlanet.getByName);
+routes.get('/planet/name/:name/',controllerPlanet.getByName);
 
 
 /**
@@ -250,18 +271,21 @@ routes.get('/planet/nome/:name/',controllerPlanet.getByName);
  *         schema:
  *           type: object
  *           properties:
- *              _id:
- *                 example: 5ed026b598fdd549bf2006f3
- *                 type: String
- *              nome:
- *                 example: Yavin IV
- *                 type: String
- *              clima:
- *                 example: temperate, tropical
- *                 type: String
- *              terreno:
- *                 example: jungle, rainforests
- *                 type: String
+ *              result:
+ *                  type: "object"
+ *                  properties:
+ *                     _id:
+ *                        example: 5ed026b598fdd549bf2006f3
+ *                        type: String
+ *                     name:
+ *                        example: Yavin IV
+ *                        type: String
+ *                     climate:
+ *                        example: temperate, tropical
+ *                        type: String
+ *                     terrain:
+ *                        example: jungle, rainforests
+ *                        type: String
  *       500:
  *         description: "Internal Server Error"
  *         schema:

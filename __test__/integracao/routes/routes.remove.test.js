@@ -61,14 +61,14 @@ describe("Test of the route /planet/:id/ with method delete",()=>{
         const expected = planets.obj[0];
 
         const id = expected._id.substring(0,expected._id.length-4)+'7777';
-        console.log(id+'\n'+expected._id);
+        //console.log(id+'\n'+expected._id);
 
         request(app)
         .delete(`/planet/${id}/`)
         .set('Content-Type','application/json; charset=utf-8')
         .send().then(received=>{
 
-            console.log(received.body.result);
+            //console.log(received.body.result);
 
             expect(received.statusCode).toBe(500);
             expect(received.body.error).toEqual("Não foi possivel localizar o planeta!\n --> Error: Não há planeta com o id: "+id);

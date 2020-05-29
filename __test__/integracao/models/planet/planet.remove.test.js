@@ -50,7 +50,7 @@ describe("The remove method from module Planet",()=>{
         const expected = planets.obj[0];
 
         const id = expected._id.substring(0,expected._id.length-4)+'7777';
-        console.log(id+'\n'+expected._id);
+        //console.log(id+'\n'+expected._id);
 
         
         await planet.remove(id).then(()=>{

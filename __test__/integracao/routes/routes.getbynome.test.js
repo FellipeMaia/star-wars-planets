@@ -46,7 +46,7 @@ describe("Test of the route /planet/nome/:nome with method get",()=>{
         planets.obj[0].films = planets.result[0].films;
 
         request(app)
-        .get(`/planet/nome/${planets.obj[0].name}/`)
+        .get(`/planet/name/${planets.obj[0].name}/`)
         .set('Content-Type','application/json; charset=utf-8')
         .send().then(received =>{
 
@@ -63,7 +63,7 @@ describe("Test of the route /planet/nome/:nome with method get",()=>{
     it('should verify if the return is a empty list, when the name is not found', async done =>{
 
         request(app)
-        .get(`/planet/nome/Ord Mantell/`)
+        .get(`/planet/name/Ord Mantell/`)
         .set('Content-Type','application/json; charset=utf-8')
         .send().then(received=>{
 

@@ -30,7 +30,7 @@ describe("The getById method from module Planet",()=>{
 
 
 it('should verify the return of the planet filtering by _ID', async done=>{
-    console.log(planets);
+    //console.log(planets);
     const expected = planets.obj[0];
 
     const received =  JSON.parse(JSON.stringify(await planet.getById(expected._id)));
@@ -44,7 +44,7 @@ it('should verify the return of the planet filtering by _ID, when the _ID is inv
     const expected = planets.obj[0];
 
     const id = expected._id.substring(0,expected._id.length-4)+'7777';
-    console.log(id+'\n'+expected._id)
+    //console.log(id+'\n'+expected._id)
     expect(id).not.toBe(expected._id);
     const received =  JSON.parse(JSON.stringify(await planet.getById(id)));
 

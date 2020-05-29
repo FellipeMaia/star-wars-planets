@@ -20,6 +20,9 @@ describe("Test of the route /planets/ with method get",()=>{
                 JSON.parse(JSON.stringify(await(new planetModel({"name": "Yavin IV","terrain": "jungle, rainforests","climate": "temperate, tropical"})).save())),
                 JSON.parse(JSON.stringify(await(new planetModel({"name": "Stewjon","terrain": "grass","climate": "temperate"})).save())),
                 JSON.parse(JSON.stringify(await(new planetModel({"name": "terra","terrain": "desert, mountains, jungle, rainforests","climate": "temperate, tropical, arid"})).save())),
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "Bespin","terrain": "gas giant","climate": "temperate"})).save())),
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "Coruscant","terrain": "cityscape, mountains","climate": "temperate"})).save())),
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "Naboo","terrain": "grassy hills, swamps, forests, mountains","climate": "temperate"})).save())),
             ],
             result:[
                 {films:5},// {"name": "Tatooine",films:5},
@@ -27,6 +30,9 @@ describe("Test of the route /planets/ with method get",()=>{
                 {films:1},// {"name": "Yavin IV",films:1},
                 {films:0},// {"name": "Stewjon",films:0},
                 {films:'Without registration!'},// {"name": "terra",films:'Sem registo!'},
+                {films:1},// {"name": "Alderaan",films:2},
+                {films:4},// {"name": "Yavin IV",films:1},
+                {films:4},// {"name": "Stewjon",films:0},
             ]
         };
     });
@@ -62,6 +68,53 @@ describe("Test of the route /planets/ with method get",()=>{
 
       
     },10000);
+
+
+    it('should verify the return of the planet list setting limit = 2 and page = 3', async done=>{
+        
+        const expected = [];
+            expected.push(Object.assign(planets.obj[4], planets.result[4]));
+            expected.push(Object.assign(planets.obj[5], planets.result[5]));
+
+        //console.log(expected)
+
+        request(app)
+        .get('/planets/').set('limit',2).set('page',3)
+        .set('Content-Type','application/json; charset=utf-8')
+        .send().then(received=>{
+
+            expect(received.statusCode).toBe(200);
+            expect(received.body.result).toEqual(expected);
+    
+            done()
+    
+        });
+
+      
+    },10000);
+
+
+    it('should verify if the returns an error message when value of limit and page are invalid', async done=>{
+        
+        const expected = [];
+            expected.push(Object.assign(planets.obj[4], planets.result[4]));
+            expected.push(Object.assign(planets.obj[5], planets.result[5]));
+
+        //console.log(expected)
+
+        request(app)
+        .get('/planets/').set('limit','A').set('page','B')
+        .set('Content-Type','application/json; charset=utf-8')
+        .send().then(received=>{
+            expect(received.statusCode).toBe(405);
+            expect(received.body.error).toEqual('ConversionError: String com caracteres invalidos para conversão.');
+    
+            done();
+    
+        });
+
+      
+    });
 
 
     it('should verify the if the list is empty', async done=>{
