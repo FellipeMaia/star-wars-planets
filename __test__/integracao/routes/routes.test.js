@@ -39,7 +39,7 @@ describe("Teste de Rota",()=>{
         virtual_mongodb.closeDatabase();
     });
 
-    it('vai testar a rota /planet/save/ utilizado o metodo post', async done=>{
+    it('vai testar a rota /planet/ utilizado o metodo post', async done=>{
         const parms = {"nome": "Ord Mantell","terreno": "plains, seas, mesas","clima": "temperate"}
         
         const retorno = await request(app)
@@ -48,33 +48,82 @@ describe("Teste de Rota",()=>{
         .send(parms);
 
         expect(retorno.statusCode).toBe(200);
-        expect(retorno.body.nome).toBe(parms.nome);
-        expect(retorno.body.terreno).toBe(parms.terreno);
-        expect(retorno.body.clima).toBe(parms.clima);
+        expect(retorno.body.result.nome).toBe(parms.nome);
+        expect(retorno.body.result.terreno).toBe(parms.terreno);
+        expect(retorno.body.result.clima).toBe(parms.clima);
 
         done();
 
     });
 
+    it('vai testar a rota /planet/ utilizado o metodo post, retornando erro', async done=>{
+        const parms = {"nome": "","terreno": "plains, seas, mesas","clima": "temperate"}
+        
+        const received = await request(app)
+        .post('/planet/')
+        .set('Content-Type','application/json; charset=utf-8')
+        .send(parms);
+
+        expect(received.statusCode).toBe(400);
+        expect(received.body.error).toBe("Campo invalido!\n --> ValidationError: planet validation failed: nome: Path `nome` is required.");
+
+        done();
+
+    });
+
+
+    it('vai testar a rota /planet/ utilizado o metodo post, retornando erro', async done=>{
+        const parms = {"nome": "Ord Mantell","terreno": "","clima": "temperate"}
+        
+        const received = await request(app)
+        .post('/planet/')
+        .set('Content-Type','application/json; charset=utf-8')
+        .send(parms);
+
+        expect(received.statusCode).toBe(400);
+        expect(received.body.error).toBe("Campo invalido!\n --> ValidationError: planet validation failed: terreno: Path `terreno` is required.");
+
+        done();
+
+    });
+
+
+    it('vai testar a rota /planet/ utilizado o metodo post, retornando erro', async done=>{
+        const parms = {"nome": "Ord Mantell","terreno": "plains, seas, mesas","clima": ""}
+        
+        const received = await request(app)
+        .post('/planet/')
+        .set('Content-Type','application/json; charset=utf-8')
+        .send(parms);
+
+        expect(received.statusCode).toBe(400);
+        expect(received.body.error).toBe("Campo invalido!\n --> ValidationError: planet validation failed: clima: Path `clima` is required.");
+
+        done();
+
+    });
+
+
     it('vai testar a rota /planets/ utilizado o metodo get', async done=>{
-       
+        
+        const expected = [];
         for(let i=0;i<planets.obj.length;i++){
-            planets.obj[i]['films'] = planets.result[i].films;
+            expected.push(Object.assign(planets.obj[i], planets.result[i]));
         };
+
+        console.log(expected)
 
         const retorno = await request(app)
         .get('/planets/')
         .set('Content-Type','application/json; charset=utf-8')
         .send();
 
-        console.log(retorno.body);
-
         expect(retorno.statusCode).toBe(200);
-        expect(retorno.body).toEqual(planets.obj);
+        expect(retorno.body.result).toEqual(expected);
 
         done()
 
-    });
+    },10000);
 
     it('vai testar a rota /planets/ utilizado o metodo get, com o retorno da mensagem "Não há planeta!"', async done=>{
        
@@ -88,8 +137,8 @@ describe("Teste de Rota",()=>{
         console.log(retorno.body);
 
         expect(retorno.statusCode).toBe(200);
-        expect(retorno.body.length).toEqual(0);
-        expect(retorno.body).toEqual([]);
+        expect(retorno.body.result.length).toEqual(0);
+        expect(retorno.body.result).toEqual([]);
 
         done()
 
@@ -105,7 +154,7 @@ describe("Teste de Rota",()=>{
         .send();
 
         expect(received.statusCode).toBe(200);
-        expect(received.body).toEqual(planets.obj[0]);
+        expect(received.body.result).toEqual(planets.obj[0]);
 
         done()
 
@@ -126,7 +175,7 @@ describe("Teste de Rota",()=>{
         console.log(received.body)
 
         expect(received.statusCode).toBe(200);
-        expect(received.body).toBe(null);
+        expect(received.body.result).toBe(null);
 
         done()
 
@@ -142,8 +191,8 @@ describe("Teste de Rota",()=>{
         .send();
 
         expect(received.statusCode).toBe(200);
-        expect(received.body.length).toBe(1);
-        expect(received.body[0]).toEqual(planets.obj[0]);
+        expect(received.body.result.length).toBe(1);
+        expect(received.body.result[0]).toEqual(planets.obj[0]);
 
         done();
 
@@ -157,8 +206,8 @@ describe("Teste de Rota",()=>{
         .send();
 
         expect(received.statusCode).toBe(200);
-        expect(received.body.length).toBe(0)
-        expect(received.body).toEqual([]);
+        expect(received.body.result.length).toBe(0)
+        expect(received.body.result).toEqual([]);
 
         done();
 
@@ -171,7 +220,7 @@ describe("Teste de Rota",()=>{
         .send();
 
         expect(received.statusCode).toBe(200);
-        expect(received.body).toEqual(planets.obj[0]);
+        expect(received.body.result).toEqual(planets.obj[0]);
 
         done();
 

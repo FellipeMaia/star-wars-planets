@@ -58,11 +58,11 @@ describe("Metodo save do modulo Planet",()=>{
             "clima": "teste23"
         }
 
-        try{
-            await planet.save(parms);
-        }catch(received){
-            expect(received.message).toBe("Campo(s) invalido!\n --> ValidationError: planet validation failed: nome: Path `nome` is required.");
-        }
+        await planet.save(parms)
+        .catch(received=>{
+            expect(received.name).toBe("ValidationError");
+            expect(received.message).toBe("planet validation failed: nome: Path `nome` is required.");
+        });
 
         done();        
        
@@ -75,11 +75,11 @@ describe("Metodo save do modulo Planet",()=>{
             "clima": "teste24"
         }
 
-        try{
-            await planet.save(parms);
-        }catch(received){
-            expect(received.message).toBe("Campo(s) invalido!\n --> ValidationError: planet validation failed: terreno: Path `terreno` is required.");
-        }
+        await planet.save(parms)
+        .catch(received=>{
+            expect(received.name).toBe("ValidationError");
+            expect(received.message).toBe("planet validation failed: terreno: Path `terreno` is required.");
+        });
 
         done();
 
@@ -92,11 +92,11 @@ describe("Metodo save do modulo Planet",()=>{
             "clima": ""
         }
 
-        try{
-            await planet.save(parms);
-        }catch(received){
-            expect(received.message).toBe("Campo(s) invalido!\n --> ValidationError: planet validation failed: clima: Path `clima` is required.");
-        }
+        await planet.save(parms)
+        .catch(received=>{
+            expect(received.name).toBe("ValidationError");
+            expect(received.message).toBe("planet validation failed: clima: Path `clima` is required.");
+        });
 
         done();
 
@@ -109,11 +109,11 @@ describe("Metodo save do modulo Planet",()=>{
             clima: "teste31"
         }   
 
-        try{
-            await planet.save(parms);
-        }catch(received){
+        await planet.save(parms)
+        .catch(received=>{
+            expect(received.name).toBe("Error");
             expect(received.message).toBe("O planeta já esta salvo!");
-        }
+        });
         
         done();
     });
@@ -126,11 +126,11 @@ describe("Metodo save do modulo Planet",()=>{
             clima: "teste777"
         }   
 
-        try{
-            await planet.save(parms);
-        }catch(received){
+        await planet.save(parms)
+        .catch(received=>{
+            expect(received.name).toBe("Error");
             expect(received.message).toBe("O planeta já esta salvo!");
-        }
+        });
         
         done();
     });
@@ -144,13 +144,15 @@ describe("Metodo save do modulo Planet",()=>{
         } 
 
         virtual_mongodb.disconnect();
-        try{
-            await planet.save(parms);
-        }catch(received){
-            expect(received.message).toBe("Não foi possivel salvar o planeta!\n --> MongoError: pool is draining, new operations prohibited");
-        }finally{
-            await virtual_mongodb.connect();
-        }
+
+        await planet.save(parms)
+        .catch(received=>{
+            expect(received.name).toEqual("MongoError");
+        expect(received.message).toEqual("pool is draining, new operations prohibited");
+        });
+        
+        await virtual_mongodb.connect();
+        
         
         done();
     });

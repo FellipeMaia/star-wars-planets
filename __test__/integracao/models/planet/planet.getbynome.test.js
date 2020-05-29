@@ -53,13 +53,14 @@ describe("Metodo getByNome do modulo Planet",()=>{
     it('vai verificar o retorno de planet filtando por nome quando esta retornando erro', async done=>{
         
         virtual_mongodb.disconnect();
-        try{
-            await planet.getByNome('teste999');
-        }catch(received){
-            expect(received.message).toBe("Não foi possivel localizar o planeta!\n --> MongoError: pool is draining, new operations prohibited");
-        }finally{
-            await virtual_mongodb.connect();
-        }
+
+        await planet.getByNome('teste999')
+        .catch(received=>{
+            expect(received.name).toEqual("MongoError");
+            expect(received.message).toEqual("pool is draining, new operations prohibited");
+        });
+
+        await virtual_mongodb.connect();
         
         done();
     });

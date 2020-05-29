@@ -56,13 +56,15 @@ it('vai verificar o retorno de planet filtrando por _ID, quando o ID esta invali
 it('vai verificar o retorno de planet filtando por _ID quando esta retornando erro', async done=>{
     
     virtual_mongodb.disconnect();
-    try{
-        await planet.getById('5ece6ebf1023932fdd984959');
-    }catch(received){
-        expect(received.message).toEqual("Não foi possivel localizar o planeta!\n --> MongoError: pool is draining, new operations prohibited");
-    }finally{
-        await virtual_mongodb.connect();
-    }
+
+    await planet.getById('5ece6ebf1023932fdd984959')
+    .catch(received=>{
+        expect(received.name).toEqual("MongoError");
+    expect(received.message).toEqual("pool is draining, new operations prohibited");
+    });
+    
+    await virtual_mongodb.connect();
+    
 
     done();
     

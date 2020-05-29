@@ -20,20 +20,7 @@ function save(params){
             .then(retorno=>{
                 return retorno;
             });
-        }).catch(err=>{
-        if(err){
-            switch(err.name){
-                case 'MongoError':
-                    const error = new Error('Não foi possivel salvar o planeta!\n --> '+err.name+': '+ err.message);
-                    throw error;
-                case 'ValidationError':
-                    throw new Error('Campo(s) invalido!\n --> '+err.name+': '+ err.message);
-                default:
-                    console.log(err);
-                    throw err;
-            }
-        }
-    });
+        });
     
 }
 
@@ -44,78 +31,34 @@ function getAll(){
                 throw new Error('retorno não definido');
             }
             return val;
-        }).catch(err=>{
-            if(err){
-                switch(err.name){
-                    case 'MongoError':
-                        const error = new Error('Não foi possivel localizar o planeta!\n --> '+err.name+': '+ err.message);
-                        throw error;
-                    default:
-                        console.log(err);
-                        throw err;
-                }
-            }
-        })
+        });
 }
 
 function getById(id){
     return planetModel.findOne({'_id':id})
         .then(val=>{
             return val;
-        }).catch(err=>{
-            if(err){
-                switch(err.name){
-                    case 'MongoError':
-                        const error = new Error('Não foi possivel localizar o planeta!\n --> '+err.name+': '+ err.message);
-                        throw error;
-                    default:
-                        console.log(err);
-                        throw err;
-                }
-            }
-        });;
+        });
 }
 
 function getByNome(nome){
     return planetModel.find({'nome':nome},'')
         .then(val=>{
             if(!val){
-                throw new Error('retorno não definido');
+                throw new Error('retorno não definido: resultado: '+val);
             }
             return val;
-        }).catch(err=>{
-            if(err){
-                switch(err.name){
-                    case 'MongoError':
-                        const error = new Error('Não foi possivel localizar o planeta!\n --> '+err.name+': '+ err.message);
-                        throw error;
-                    default:
-                        console.log(err);
-                        throw err;
-                }
-            }
-        });;
+        });
 }
 
 function remove(id){
     return planetModel.findByIdAndDelete(id)
         .then(val=>{
             if(!val){
-                throw new Error('retorno não definido');
+                throw new Error('Não há planeta com o id: '+id);
             }
             return val;
-        }).catch(err=>{
-            if(err){
-                switch(err.name){
-                    case 'MongoError':
-                        const error = new Error('Não foi possivel remover o planeta!\n --> '+err.name+': '+ err.message);
-                        throw error;
-                    default:
-                        console.log(err);
-                        throw err;
-                }
-            }
-        });;
+        });
 }
 
 module.exports.planet = {save,getAll,getById,getByNome,remove}

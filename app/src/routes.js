@@ -60,7 +60,7 @@ const controllerPlanet = require('./controllers/controllerPlanet');
  *                 example: "jungle, rainforests"
  *                 type: String
  */
-routes.post('/planet/', controllerPlanet.post);
+routes.post('/planet/', controllerPlanet.save);
 
 /**
  * @swagger

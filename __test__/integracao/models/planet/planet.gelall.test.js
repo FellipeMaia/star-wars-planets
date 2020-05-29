@@ -64,13 +64,13 @@ describe("Metodo getAll do moulo Planet",()=>{
 
     it('vai varificar o retorno do erro para a função getAll', async done=>{
         virtual_mongodb.disconnect();
-        try{
-            const retorno = await planet.getAll();
-        }catch(err){
-            expect(err.message).toBe("Não foi possivel localizar o planeta!\n --> MongoError: pool is draining, new operations prohibited");
-        }finally{
-            await virtual_mongodb.connect();
-        }
+
+        await planet.getAll()
+        .catch(received=>{
+            expect(received.name).toEqual("MongoError");
+            expect(received.message).toEqual("pool is draining, new operations prohibited");
+        });
+        await virtual_mongodb.connect();
 
         done();
     

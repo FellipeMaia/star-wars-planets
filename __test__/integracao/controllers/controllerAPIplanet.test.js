@@ -41,7 +41,7 @@ describe("Teste da API com as informações de Star Wars",()=>{
         expect(receiveds).toEqual(planets.result);
 
         done();
-    });
+    },10000);
 
     it('Retorna erro pois teve mais 1 retorno da API', async done=>{
         
@@ -51,6 +51,6 @@ describe("Teste da API com as informações de Star Wars",()=>{
 
         done();
 
-    });
+    },10000);
 
 });
