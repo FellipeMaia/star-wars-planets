@@ -16,6 +16,9 @@ describe("The getAll method from module Planet",()=>{
                 JSON.parse(JSON.stringify(await(new planetModel({"name": "test32","terrain": "test32","climate": "test32"})).save())),
                 JSON.parse(JSON.stringify(await(new planetModel({"name": "test33","terrain": "test33","climate": "test33"})).save())),
                 JSON.parse(JSON.stringify(await(new planetModel({"name": "test34","terrain": "test34","climate": "test34"})).save())),
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "test42","terrain": "test42","climate": "test42"})).save())),
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "test43","terrain": "test43","climate": "test43"})).save())),
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "test44","terrain": "test44","climate": "test44"})).save())),
             ]
         }
     });
@@ -39,7 +42,7 @@ describe("The getAll method from module Planet",()=>{
                     arrayRetorno.push(JSON.parse(JSON.stringify(el)));
                 })
             }
-            console.log(arrayRetorno);
+            //console.log(arrayRetorno);
             expect(retorno.totalPage).toEqual(1);
             expect(arrayRetorno).toEqual(planets.obj);
             
@@ -48,14 +51,14 @@ describe("The getAll method from module Planet",()=>{
 
     });
 
-    it('should verify the return of the planet list setting limit = 2 and page = 2',done=>{
+    it('should verify the return of the planet list setting limit = 2 and page = 3',done=>{
         const expected = [
-            planets.obj[2],
-            planets.obj[3]
+            planets.obj[4],
+            planets.obj[5]
         ]   
 
-        planet.getAll(2,2).then(retorno=>{
-            console.log(retorno);
+        planet.getAll(2,3).then(retorno=>{
+            //console.log(retorno);
 
             let arrayRetorno = [];
             if(Array.isArray(retorno.planets)){
@@ -63,8 +66,9 @@ describe("The getAll method from module Planet",()=>{
                     arrayRetorno.push(JSON.parse(JSON.stringify(el)));
                 })
             }
-            console.log(arrayRetorno);
-            expect(retorno.totalPage).toEqual(2);
+            //console.log(arrayRetorno);
+            expect(arrayRetorno.length).toEqual(2);
+            expect(retorno.totalPage).toEqual(4);
             expect(arrayRetorno).toEqual(expected);
             
             done();
