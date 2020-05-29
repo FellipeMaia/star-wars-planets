@@ -2,9 +2,9 @@ const mongoose = require('../../config/database').mongoose;
 
 
 const planet = new mongoose.Schema({
-        nome:{type: String, required : true},
-        clima:{type: String, required : true},
-        terreno:{type: String, required : true},
+        name:{type: String, required : true},
+        climate:{type: String, required : true},
+        terrain:{type: String, required : true},
     });
 
 const planetModel = mongoose.model("planet",planet);
@@ -12,9 +12,9 @@ const planetModel = mongoose.model("planet",planet);
 module.exports.planetModel = planetModel;
 
 function save(params){
-    return planetModel.findOne({nome:params.nome}).then(val=>{
+    return planetModel.findOne({name:params.name}).then(val=>{
         if(val){
-            throw new Error('O planeta já esta salvo!');
+            throw new Error('O planeta já foi salvo.');
         }
         return planetModel(params).save()
             .then(retorno=>{
@@ -24,14 +24,24 @@ function save(params){
     
 }
 
-function getAll(){
-    return planetModel.find({})
-        .then(val=>{
-            if(!val){
-                throw new Error('retorno não definido');
-            }
-            return val;
-        });
+function getAll(limit = 10, page = 1){
+    limit = (limit>100?100:limit);
+    let cont;
+    return planetModel.find().count().then(val=>{
+                cont = val;
+                return planetModel.find().skip((limit*page)-limit).limit((limit*page))
+            }).then(result=>{
+                return {
+                            planets: result,
+                            totalPage: Math.ceil(cont/limit)
+                        }
+            })
+            .then(val=>{
+                if(!val.planets){
+                    throw new Error('Retorno não definido');
+                }
+                return val;
+            });
 }
 
 function getById(id){
@@ -41,11 +51,11 @@ function getById(id){
         });
 }
 
-function getByNome(nome){
-    return planetModel.find({'nome':nome},'')
+function getByName(name){
+    return planetModel.find({'name':name},'')
         .then(val=>{
             if(!val){
-                throw new Error('retorno não definido: resultado: '+val);
+                throw new Error('Retorno não definido');
             }
             return val;
         });
@@ -61,4 +71,4 @@ function remove(id){
         });
 }
 
-module.exports.planet = {save,getAll,getById,getByNome,remove}
+module.exports.planet = {save,getAll,getById,getByName,remove}

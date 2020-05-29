@@ -1,13 +1,18 @@
-const controllerAPIplanet = require('../../../app/src/controllers/controllerAPIplanet');
 const {planetModel} = require('../../../app/src/models/planet');
 const virtual_mongodb = require('../../_ultil/virtual-mongodb');
 
+const request = require('supertest');
+const app = require('../../../app/config/server').app;
+
 let planets;
 
-describe("Test of API with Star Wars informations",()=>{
-
+describe("Test of the route /planet/nome/:nome with method get",()=>{
+    
     beforeAll(async ()=>{
-        virtual_mongodb.connect();
+        await virtual_mongodb.connect();
+    })
+
+    beforeEach(async ()=>{
         planets = {
             obj:[
                 JSON.parse(JSON.stringify(await(new planetModel({"name": "Tatooine","terrain": "desert","climate": "arid"})).save())),
@@ -26,31 +31,51 @@ describe("Test of API with Star Wars informations",()=>{
         };
     });
 
-    afterAll(async ()=>{
+    afterEach(async ()=>{
+        virtual_mongodb.clearDatabase();
+    })
+
+    afterAll(async()=>{
         virtual_mongodb.closeDatabase();
     });
 
-    it('Should verify return informations of planet search by name', async done=>{
-        
 
-        let receiveds = [];
-        for(let i=0;i<planets.obj.length;i++){
-            receiveds.push(await controllerAPIplanet.getInformacaoPlanta(planets.obj[i].name));
-        }
+    
+    it('should verify the return of the planet filtering by name', async done =>{
 
-        expect(receiveds).toEqual(planets.result);
+        planets.obj[0].films = planets.result[0].films;
 
-        done();
-    },10000);
+        request(app)
+        .get(`/planet/nome/${planets.obj[0].name}/`)
+        .set('Content-Type','application/json; charset=utf-8')
+        .send().then(received =>{
 
-    it('Should verify error message when has return more of one planet', async done=>{
-        
-        const received = await controllerAPIplanet.getInformacaoPlanta('te');
-        
-        expect(received.mensagem).toEqual('Retorno com mais de um elemento!');
+            expect(received.statusCode).toBe(200);
+            expect(received.body.result.length).toBe(1);
+            expect(received.body.result[0]).toEqual(planets.obj[0]);
+    
+            done();
+        });
 
-        done();
 
     },10000);
+
+    it('should verify if the return is a empty list, when the name is not found', async done =>{
+
+        request(app)
+        .get(`/planet/nome/Ord Mantell/`)
+        .set('Content-Type','application/json; charset=utf-8')
+        .send().then(received=>{
+
+            expect(received.statusCode).toBe(200);
+            expect(received.body.result.length).toBe(0)
+            expect(received.body.result).toEqual([]);
+    
+            done();
+        })
+
+
+    });
+
 
 });

@@ -2,44 +2,52 @@ const {planet} = require('../models/planet');
 const APIPlanet = require('./controllerAPIplanet');
 
 module.exports.save = function(req,res){
-    const {nome,terreno,clima} = req.body;
-    const params =  {nome:nome,terreno:terreno,clima:clima};
+    const {name,terrain,climate} = req.body;
+    const params =  {name:name,terrain:terrain,climate:climate};
 
     planet.save(params).then(val=>{
         res.json({result:val});  
-    }).catch(e=>{
-        if(e){
+    }).catch(err=>{
+        console.log(err);
+        if(err){
             res.type('application/json');
-            switch(e.name){
+            switch(err.name){
                 case 'ValidationError':
-                    res.status(400).json({error: 'Campo invalido!\n --> '+e.name+': '+ e.message});
+                    res.status(405).json({error: 'Campo invalido!\n --> '+err.name+': '+ err.message});
                 break;
                 default:
-                    res.status(500).json({error: 'Não foi possivel salvar o planeta!\n --> '+e.name+': '+ e.message});
+                    res.status(500).json({error: 'Não foi possivel salvar o planeta!\n --> '+err.name+': '+ err.message});
                 break;
             }
+            return;
         }
     });
 }
 
 
 module.exports.getAll = function(req,res){
-    planet.getAll().then(async val=>{
-        if(!Array.isArray(val)){
-            return res.json({result:val});
+    const limit = req.header('limit');
+    const page = req.header('page');
+    planet.getAll(limit,page).then(async val=>{
+        res.type('application/json');
+        res.set('total-page',val.totalPage);
+        if(!Array.isArray(val.planets)){
+            return res.json({result:val.planets});
         }
         const results = [];
-        for(let i=0;i<val.length;i++){
-            const result = JSON.parse(JSON.stringify(val[i]));
-            result['films'] = (await APIPlanet.getInformacaoPlanta(result.nome)).films;
+        for(let i=0;i<val.planets.length;i++){
+            const result = JSON.parse(JSON.stringify(val.planets[i]));
+            result['films'] = (await APIPlanet.getInformacaoPlanta(result.name)).films;
             results.push(result);
         };
         res.json({result:results});
         
     }).catch(err=>{
+        console.log(err);
         if(err){
             res.type('application/json');
             res.status(500).json({error: 'Não foi possivel localizar o planeta!\n --> '+err.name+': '+ err.message});
+            return;
         }
     })
 }
@@ -52,36 +60,38 @@ module.exports.getById = function(req,res){
             return res.json({result:val});
         }
         const result = JSON.parse(JSON.stringify(val));
-        result.films = (await APIPlanet.getInformacaoPlanta(result.nome)).films;
+        result.films = (await APIPlanet.getInformacaoPlanta(result.name)).films;
         res.json({result:result});
     }).catch(err=>{
         console.log(err);
         if(err){
             res.set('Content-Type','application/json')
-            .status(500)
-            .json({error: 'Não foi possivel localizar o planeta!\n --> '+err.name+': '+ err.message});
+            res.status(500).json({error: 'Não foi possivel localizar o planeta!\n --> '+err.name+': '+ err.message});
+            return;
         }
     });
 }
 
-module.exports.getByNome = function(req,res){
-    const {nome} = req.params;
-    planet.getByNome(nome).then(async val=>{
+module.exports.getByName = function(req,res){
+    const {name} = req.params;
+    planet.getByName(name).then(async val=>{
         if(!Array.isArray(val)){
             return res.json({result:val});
         }
         const results = [];
         for(let i=0;i<val.length;i++){
             const result = JSON.parse(JSON.stringify(val[i]));
-            result['films'] = (await APIPlanet.getInformacaoPlanta(result.nome)).films;
+            result['films'] = (await APIPlanet.getInformacaoPlanta(result.name)).films;
             results.push(result);
         };
         res.json({result:results});    
         
     }).catch(err=>{
+        console.log(err);
         if(err){
             res.type('application/json');
             res.status(500).json({error: 'Não foi possivel localizar o planeta!\n --> '+err.name+': '+ err.message});
+            return;
         }
     });
 }
@@ -91,9 +101,11 @@ module.exports.remove = function(req,res){
     planet.remove(id).then(val=>{
         res.json({result:val});
     }).catch(err=>{
+        console.log(err);
         if(err){
             res.type('application/json');
             res.status(500).json({error: 'Não foi possivel localizar o planeta!\n --> '+err.name+': '+ err.message});
+            return;
         }
     });
 }

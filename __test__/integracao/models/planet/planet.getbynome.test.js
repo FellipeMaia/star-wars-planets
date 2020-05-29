@@ -3,7 +3,7 @@ const virtual_mongodb = require('../../../_ultil/virtual-mongodb');
 
 let planets;
 
-describe("Metodo getByNome do modulo Planet",()=>{
+describe("The getByName method from module Planet",()=>{
 
     beforeAll(async ()=>{
         await virtual_mongodb.connect();
@@ -12,10 +12,10 @@ describe("Metodo getByNome do modulo Planet",()=>{
     beforeEach(async ()=>{
         planets = {
             obj:[
-                JSON.parse(JSON.stringify(await(new planetModel({"nome": "teste31","terreno": "teste31","clima": "teste31"})).save())),
-                JSON.parse(JSON.stringify(await(new planetModel({"nome": "teste32","terreno": "teste32","clima": "teste32"})).save())),
-                JSON.parse(JSON.stringify(await(new planetModel({"nome": "teste33","terreno": "teste33","clima": "teste33"})).save())),
-                JSON.parse(JSON.stringify(await(new planetModel({"nome": "teste34","terreno": "teste34","clima": "teste34"})).save())),
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "test31","terrain": "test31","climate": "test31"})).save())),
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "test32","terrain": "test32","climate": "test32"})).save())),
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "test33","terrain": "test33","climate": "test33"})).save())),
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "test34","terrain": "test34","climate": "test34"})).save())),
             ]
         }
     });
@@ -29,32 +29,39 @@ describe("Metodo getByNome do modulo Planet",()=>{
     });
 
 
-    it('vai verificar o retorno de planet filtando por nome', async done=>{
+    it('should verify the return of the planet filtering by name', done=>{
         const expected = planets.obj[0];
 
-        const received =  JSON.parse(JSON.stringify(await planet.getByNome(expected.nome)));
+        planet.getByName(expected.name).then(received=>{
 
-        expect(received.length).toBe(1);
-        expect(received[0]).toEqual(expected);
+            expect(received.length).toBe(1);
+            expect(received[0].name).toBe(expected.name);
+            expect(received[0].terrain).toBe(expected.terrain);
+            expect(received[0].climate).toBe(expected.climate);
+            expect(received[0].id).toBe(expected._id);
 
-        done();
+            done();
+    
+        })
     });
 
-    it('vai verificar o retorno de planet filtando por nome quando esta vazio', async done=>{
+    it('should verify if the return is a empty list, when the name is not found', done=>{
        
-        const received =  JSON.parse(JSON.stringify(await planet.getByNome('teste-not-have')));
+        planet.getByName('teste-not-have').then(received=>{
 
-        expect(received.length).toBe(0);
-        expect(received).toEqual([]);
-
-        done();
+            expect(received.length).toBe(0);
+            expect(received).toEqual([]);
+    
+            done();
+    
+        })
     });
 
-    it('vai verificar o retorno de planet filtando por nome quando esta retornando erro', async done=>{
+    it('should verify if the returns an error message', async done=>{
         
         virtual_mongodb.disconnect();
 
-        await planet.getByNome('teste999')
+        planet.getByName('teste999')
         .catch(received=>{
             expect(received.name).toEqual("MongoError");
             expect(received.message).toEqual("pool is draining, new operations prohibited");

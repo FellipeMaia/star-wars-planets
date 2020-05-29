@@ -35,16 +35,17 @@ prop = {
         reconnectInterval: 1000
     };
 
-    return  mongoose.connect(url,mongooseOpts).then((val)=>{
+    return  mongoose.connect(url,mongooseOpts)
+    .then((val)=>{
         console.log(
             `iniciado a conexão\n${val.connections[0].host}:${val.connections[0].port}/${val.connections[0].name}`
         );
-    }).catch(err=>{
-        if(err){
-            console.error(err);
-            process.exit;
-        }
     })
+    // .catch(err=>{
+    //     if(err){
+    //         throw err;
+    //     }
+    // })
 }
 
 if(process.env.TEST === 'true'){

@@ -1,13 +1,18 @@
-const controllerAPIplanet = require('../../../app/src/controllers/controllerAPIplanet');
 const {planetModel} = require('../../../app/src/models/planet');
 const virtual_mongodb = require('../../_ultil/virtual-mongodb');
 
+const request = require('supertest');
+const app = require('../../../app/config/server').app;
+
 let planets;
 
-describe("Test of API with Star Wars informations",()=>{
-
+describe("Test of the route /planet/id/:id with methodo get",()=>{
+    
     beforeAll(async ()=>{
-        virtual_mongodb.connect();
+        await virtual_mongodb.connect();
+    })
+
+    beforeEach(async ()=>{
         planets = {
             obj:[
                 JSON.parse(JSON.stringify(await(new planetModel({"name": "Tatooine","terrain": "desert","climate": "arid"})).save())),
@@ -26,31 +31,53 @@ describe("Test of API with Star Wars informations",()=>{
         };
     });
 
-    afterAll(async ()=>{
+    afterEach(async ()=>{
+        virtual_mongodb.clearDatabase();
+    })
+
+    afterAll(async()=>{
         virtual_mongodb.closeDatabase();
     });
 
-    it('Should verify return informations of planet search by name', async done=>{
+
+    it('should verify the return of the planet filtering by _ID', async done=>{
         
+        planets.obj[0].films = planets.result[0].films;
 
-        let receiveds = [];
-        for(let i=0;i<planets.obj.length;i++){
-            receiveds.push(await controllerAPIplanet.getInformacaoPlanta(planets.obj[i].name));
-        }
+        const received = await request(app)
+        .get(`/planet/id/${planets.obj[0]._id}/`)
+        .set('Content-Type','application/json; charset=utf-8')
+        .send();
 
-        expect(receiveds).toEqual(planets.result);
+        expect(received.statusCode).toBe(200);
+        expect(received.body.result).toEqual(planets.obj[0]);
 
-        done();
+        done()
+
     },10000);
 
-    it('Should verify error message when has return more of one planet', async done=>{
+    it('should verify the return of the planet filtering by _ID, when the _ID is invalid', async done=>{
         
-        const received = await controllerAPIplanet.getInformacaoPlanta('te');
-        
-        expect(received.mensagem).toEqual('Retorno com mais de um elemento!');
+        const expected = planets.obj[0];
 
-        done();
+        const id = expected._id.substring(0,expected._id.length-4)+'7777';
+        console.log(id+'\n'+expected._id);
 
-    },10000);
+        const received = await request(app)
+        .get(`/planet/id/${id}/`)
+        .set('Content-Type','application/json; charset=utf-8')
+        .send();
+
+        console.log(received.body)
+
+        expect(received.statusCode).toBe(200);
+        expect(received.body.result).toBe(null);
+
+        done()
+
+    });
+
+
+
 
 });

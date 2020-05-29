@@ -59,6 +59,22 @@ const controllerPlanet = require('./controllers/controllerPlanet');
  *              terreno:
  *                 example: "jungle, rainforests"
  *                 type: String
+ *       405:
+ *         description: "Validation exception"
+ *         schema:
+ *           type: object
+ *           properties:
+ *              error:
+ *                 example: "Campo invalido!\n --> ValidationError: planet validation failed: nome: Path `nome` is required."
+ *                 type: String
+ *       500:
+ *         description: "Internal Server Error"
+ *         schema:
+ *           type: object
+ *           properties:
+ *              error:
+ *                 example: "Não foi possivel salvar o planeta!\n --> MongoError: pool is draining, new operations prohibited"
+ *                 type: String
  */
 routes.post('/planet/', controllerPlanet.save);
 
@@ -72,9 +88,28 @@ routes.post('/planet/', controllerPlanet.save);
  *     summary: Retorna todos os planetas
  *     produces:
  *      - application/json
+ *     parameters:
+ *        - name: limit
+ *          in: header
+ *          description: "Tamanho da pagina\n limit maximo é de 100 itens\nValor padrão é 10"
+ *          required: false
+ *          schema:
+ *              type: Integer
+ *        - name: page
+ *          in: header
+ *          description: "o numero da pagina que deseja receber\nValor padráo é 1"
+ *          required: false
+ *          schema:
+ *              type: Integer
  *     responses:
  *       200:
  *         description: Retorna todos os planetas
+ *         headers:
+ *           total-page:
+ *              description: Total de paginas disponiveis 
+ *              schema:
+ *                  type: integer
+ *                  example: 2
  *         schema:
  *           type: object
  *           properties:
@@ -93,7 +128,14 @@ routes.post('/planet/', controllerPlanet.save);
  *              filmes:
  *                 example: 1
  *                 type: Integer
- *              
+ *       500:
+ *         description: "Internal Server Error"
+ *         schema:
+ *           type: object
+ *           properties:
+ *              error:
+ *                 example: "Não foi possivel salvar o planeta!\n --> MongoError: pool is draining, new operations prohibited"
+ *                 type: String    
  */
 routes.get('/planets/',controllerPlanet.getAll);
 
@@ -129,6 +171,14 @@ routes.get('/planets/',controllerPlanet.getAll);
  *                 type: String
  *              terreno:
  *                 example: jungle, rainforests
+ *                 type: String
+ *       500:
+ *         description: "Internal Server Error"
+ *         schema:
+ *           type: object
+ *           properties:
+ *              error:
+ *                 example: "Não foi possivel salvar o planeta!\n --> MongoError: pool is draining, new operations prohibited"
  *                 type: String
  */
 routes.get('/planet/id/:id/',controllerPlanet.getById);
@@ -167,8 +217,16 @@ routes.get('/planet/id/:id/',controllerPlanet.getById);
  *              terreno:
  *                 example: jungle, rainforests
  *                 type: String
+ *       500:
+ *         description: "Internal Server Error"
+ *         schema:
+ *           type: object
+ *           properties:
+ *              error:
+ *                 example: "Não foi possivel salvar o planeta!\n --> MongoError: pool is draining, new operations prohibited"
+ *                 type: String
  */
-routes.get('/planet/nome/:nome/',controllerPlanet.getByNome);
+routes.get('/planet/nome/:name/',controllerPlanet.getByName);
 
 
 /**
@@ -203,6 +261,14 @@ routes.get('/planet/nome/:nome/',controllerPlanet.getByNome);
  *                 type: String
  *              terreno:
  *                 example: jungle, rainforests
+ *                 type: String
+ *       500:
+ *         description: "Internal Server Error"
+ *         schema:
+ *           type: object
+ *           properties:
+ *              error:
+ *                 example: "Não foi possivel salvar o planeta!\n --> MongoError: pool is draining, new operations prohibited"
  *                 type: String
  */
 routes.delete('/planet/:id/',controllerPlanet.remove);

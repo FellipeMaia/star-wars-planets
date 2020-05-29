@@ -1,13 +1,18 @@
-const controllerAPIplanet = require('../../../app/src/controllers/controllerAPIplanet');
 const {planetModel} = require('../../../app/src/models/planet');
 const virtual_mongodb = require('../../_ultil/virtual-mongodb');
 
+const request = require('supertest');
+const app = require('../../../app/config/server').app;
+
 let planets;
 
-describe("Test of API with Star Wars informations",()=>{
-
+describe("Test of the route /planets/ with method get",()=>{
+    
     beforeAll(async ()=>{
-        virtual_mongodb.connect();
+        await virtual_mongodb.connect();
+    })
+
+    beforeEach(async ()=>{
         planets = {
             obj:[
                 JSON.parse(JSON.stringify(await(new planetModel({"name": "Tatooine","terrain": "desert","climate": "arid"})).save())),
@@ -26,31 +31,59 @@ describe("Test of API with Star Wars informations",()=>{
         };
     });
 
-    afterAll(async ()=>{
+    afterEach(async ()=>{
+        virtual_mongodb.clearDatabase();
+    })
+
+    afterAll(async()=>{
         virtual_mongodb.closeDatabase();
     });
 
-    it('Should verify return informations of planet search by name', async done=>{
+    it('should verify the return of the planet list', async done=>{
         
-
-        let receiveds = [];
+        const expected = [];
         for(let i=0;i<planets.obj.length;i++){
-            receiveds.push(await controllerAPIplanet.getInformacaoPlanta(planets.obj[i].name));
-        }
+            expected.push(Object.assign(planets.obj[i], planets.result[i]));
+        };
 
-        expect(receiveds).toEqual(planets.result);
+        //console.log(expected)
 
-        done();
+        request(app)
+        .get('/planets/')
+        .set('Content-Type','application/json; charset=utf-8')
+        .send().then(received=>{
+
+            expect(received.statusCode).toBe(200);
+            expect(received.body.result).toEqual(expected);
+    
+            done()
+    
+        });
+
+      
     },10000);
 
-    it('Should verify error message when has return more of one planet', async done=>{
-        
-        const received = await controllerAPIplanet.getInformacaoPlanta('te');
-        
-        expect(received.mensagem).toEqual('Retorno com mais de um elemento!');
 
-        done();
+    it('should verify the if the list is empty', async done=>{
+       
+        planetModel.deleteMany({}).then(()=>{
+            return request(app)
+                .get('/planets/')
+                .set('Content-Type','application/json; charset=utf-8')
+                .send()
+        }).then(retorno=>{
 
-    },10000);
+            expect(retorno.get('total-page')).toBe('0');
+            expect(retorno.statusCode).toBe(200);
+            expect(retorno.body.result.length).toEqual(0);
+            expect(retorno.body.result).toEqual([]);
+    
+            done()
+
+        });
+
+
+    });
+
 
 });

@@ -3,7 +3,7 @@ const virtual_mongodb = require('../../../_ultil/virtual-mongodb');
 
 let planets;
 
-describe("Metodo remove do modulo Planet",()=>{
+describe("The remove method from module Planet",()=>{
 
     beforeAll(async ()=>{
         await virtual_mongodb.connect();
@@ -12,18 +12,11 @@ describe("Metodo remove do modulo Planet",()=>{
     beforeEach(async ()=>{
         planets = {
             obj:[
-                JSON.parse(JSON.stringify(await(new planetModel({"nome": "teste31","terreno": "teste31","clima": "teste31"})).save())),
-                JSON.parse(JSON.stringify(await(new planetModel({"nome": "teste32","terreno": "teste32","clima": "teste32"})).save())),
-                JSON.parse(JSON.stringify(await(new planetModel({"nome": "teste33","terreno": "teste33","clima": "teste33"})).save())),
-                JSON.parse(JSON.stringify(await(new planetModel({"nome": "teste34","terreno": "teste34","clima": "teste34"})).save())),
-            ],
-            getAllIds : function(){
-                let ids = [];
-                planets.obj.forEach(el=>{
-                    ids.push(el._id);
-                })
-                return ids;
-            }
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "test31","terrain": "test31","climate": "test31"})).save())),
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "test32","terrain": "test32","climate": "test32"})).save())),
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "test33","terrain": "test33","climate": "test33"})).save())),
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "test34","terrain": "test34","climate": "test34"})).save())),
+            ]
         }
     });
 
@@ -36,41 +29,54 @@ describe("Metodo remove do modulo Planet",()=>{
     });
 
 
-    it('Vai remover um planet do database', async ()=>{
+    it('should verify if the planet was removed from database', async done=>{
         const expected = planets.obj[0];
 
-        const received = JSON.parse(JSON.stringify(await planet.remove(expected._id)));
+        planet.remove(expected._id)
+        .then(received=>{
 
-        console.log(received);
+            expect(received.name).toBe(expected.name);
+            expect(received.terrain).toBe(expected.terrain);
+            expect(received.climate).toBe(expected.climate);
+            expect(received.id).toBe(expected._id);
 
-        expect(received).toEqual(expected);
+            done();
+        });
+
+
     });
 
-    it('Irá retornar a mensagem indicando que o planeta não foi encontrado', async done=>{
+    it('should verify the error message when the _ID is not found', async done=>{
         const expected = planets.obj[0];
 
         const id = expected._id.substring(0,expected._id.length-4)+'7777';
         console.log(id+'\n'+expected._id);
 
-        try{
-            await planet.remove(expected._id);
-        }catch(received){
+        
+        await planet.remove(id).then(()=>{
+            done.fail('Não ocorreu o erro!');
+        }).catch(received=>{
+
             expect(received.name).toBe('Error');
             expect(received.message).toBe('Não há planeta com o id: '+id);
-        }
 
-        done()
+            done();
+        })
+
+        
     });
 
-    it('Vai retornar a mensagem indicando que ocorreu erro', async done=>{
+    it('should verify if the returns an error message', async done=>{
         const expected = planets.obj[0];
 
         virtual_mongodb.disconnect();
         
-        await planet.remove(expected._id)
+        planet.remove(expected._id).then(()=>{
+            done.fail('Não ocorreu o erro!');
+        })
         .catch(received=>{
             expect(received.name).toEqual("MongoError");
-        expect(received.message).toEqual("pool is draining, new operations prohibited");
+            expect(received.message).toEqual("pool is draining, new operations prohibited");
         });
 
         await virtual_mongodb.connect();

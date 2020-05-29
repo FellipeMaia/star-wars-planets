@@ -3,7 +3,7 @@ const virtual_mongodb = require('../../../_ultil/virtual-mongodb');
 
 let planets;
 
-describe("Metodo save do modulo Planet",()=>{
+describe("The save method from module Planet",()=>{
 
     beforeAll(async ()=>{
         await virtual_mongodb.connect();
@@ -12,10 +12,10 @@ describe("Metodo save do modulo Planet",()=>{
     beforeEach(async ()=>{
         planets = {
             obj:[
-                JSON.parse(JSON.stringify(await(new planetModel({"nome": "teste31","terreno": "teste31","clima": "teste31"})).save())),
-                JSON.parse(JSON.stringify(await(new planetModel({"nome": "teste32","terreno": "teste32","clima": "teste32"})).save())),
-                JSON.parse(JSON.stringify(await(new planetModel({"nome": "teste33","terreno": "teste33","clima": "teste33"})).save())),
-                JSON.parse(JSON.stringify(await(new planetModel({"nome": "teste34","terreno": "teste34","clima": "teste34"})).save())),
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "test31","terrain": "test31","climate": "test31"})).save())),
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "test32","terrain": "test32","climate": "test32"})).save())),
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "test33","terrain": "test33","climate": "test33"})).save())),
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "test34","terrain": "test34","climate": "test34"})).save())),
             ]
         };
         
@@ -29,126 +29,131 @@ describe("Metodo save do modulo Planet",()=>{
         virtual_mongodb.closeDatabase();
     });
 
-    it('vai verificar se é possivel savar um objeto', async done=>{
+    it('should verify if the planet was save to database', async done=>{
         planetModel.findOneAndDelete()
         const parms = {
-            "nome": "teste22",
-            "terreno": "teste22",
-            "clima": "teste22"
+            "name": "test22",
+            "terrain": "test22",
+            "climate": "test22"
         }
 
-        const retorno = JSON.parse(JSON.stringify(await planet.save(parms)));
+        planet.save(parms).then(retorno => {
+
+            expect(retorno.mansagem).toBe(undefined);
+            expect(retorno.name).toBe(parms.name);
+            expect(retorno.terrain).toBe(parms.terrain);
+            expect(retorno.climate).toBe(parms.climate);
+    
+            planets.obj.push(JSON.parse(JSON.stringify(retorno)));
+    
+            done();
+
+        });
 
 
-        expect(retorno.mansagem).toBe(undefined);
-        expect(retorno.nome).toBe(parms.nome);
-        expect(retorno.terreno).toBe(parms.terreno);
-        expect(retorno.clima).toBe(parms.clima);
-
-        planets.obj.push(JSON.parse(JSON.stringify(retorno)));
-
-        done();
 
     });
 
-    it('vai verificar se mongoose esta retornando erro quando o campo nome esta vasio', async done=>{
+    it('should verify error message when the `name` field is empty', async done=>{
         const parms = {
-            "nome": "",
-            "terreno": "teste23",
-            "clima": "teste23"
+            "name": "",
+            "terrain": "test23",
+            "climate": "test23"
         }
 
         await planet.save(parms)
         .catch(received=>{
             expect(received.name).toBe("ValidationError");
-            expect(received.message).toBe("planet validation failed: nome: Path `nome` is required.");
+            expect(received.message).toBe("planet validation failed: name: Path `name` is required.");
         });
 
         done();        
        
     });
 
-    it('vai verificar se mongoose esta retornando erro quando o campo terreno esta vasio', async done=>{
+    it('should verify error message when the `terrain` field is empty', async done=>{
         const parms = {
-            "nome": "teste24",
-            "terreno": "",
-            "clima": "teste24"
+            "name": "test24",
+            "terrain": "",
+            "climate": "test24"
         }
 
         await planet.save(parms)
         .catch(received=>{
             expect(received.name).toBe("ValidationError");
-            expect(received.message).toBe("planet validation failed: terreno: Path `terreno` is required.");
+            expect(received.message).toBe("planet validation failed: terrain: Path `terrain` is required.");
         });
 
         done();
 
     });
 
-    it('vai verificar se mongoose esta retornando erro quando o campo clima esta vasio', async done=>{
+    it('should verify error message when the `climate` field is empty', async done=>{
         const parms = {
-            "nome": "teste25",
-            "terreno": "teste25",
-            "clima": ""
+            "name": "test25",
+            "terrain": "test25",
+            "climate": ""
         }
 
         await planet.save(parms)
         .catch(received=>{
             expect(received.name).toBe("ValidationError");
-            expect(received.message).toBe("planet validation failed: clima: Path `clima` is required.");
+            expect(received.message).toBe("planet validation failed: climate: Path `climate` is required.");
         });
 
         done();
 
     });
 
-    it('vai verificar se retorna erro quando tenta salvar objetos iguais no banco', async done=>{
+    it('should verify the error message when trying to save the same planet twice', async done=>{
         const parms = {
-            nome: "teste31",
-            terreno: "teste31",
-            clima: "teste31"
+            name: "test31",
+            terrain: "test31",
+            climate: "test31"
         }   
 
         await planet.save(parms)
         .catch(received=>{
             expect(received.name).toBe("Error");
-            expect(received.message).toBe("O planeta já esta salvo!");
+            expect(received.message).toBe("O planeta já foi salvo.");
         });
         
         done();
     });
 
 
-    it('vai verificar se retorna erro quando tenta salvar objetos somente os nomes iguais no banco', async done=>{
+    it('should verify the error message when trying to save two planet with the same name field', async done=>{
         const parms = {
-            nome: "teste31",
-            terreno: "teste8888",
-            clima: "teste777"
+            name: "test31",
+            terrain: "test8888",
+            climate: "test777"
         }   
 
         await planet.save(parms)
         .catch(received=>{
             expect(received.name).toBe("Error");
-            expect(received.message).toBe("O planeta já esta salvo!");
+            expect(received.message).toBe("O planeta já foi salvo.");
         });
         
         done();
     });
 
 
-    it('Vai retornar a mensagem indicando que ocorreu erro', async done=>{
+    it('should verify if the returns an error message', async done=>{
         const parms = {
-            nome: "teste31",
-            terreno: "teste8888",
-            clima: "teste777"
+            name: "test31",
+            terrain: "test8888",
+            climate: "test777"
         } 
 
         virtual_mongodb.disconnect();
 
-        await planet.save(parms)
+        await planet.save(parms).then(()=>{
+            done.fail('Estava esperando um erro!');
+        })
         .catch(received=>{
             expect(received.name).toEqual("MongoError");
-        expect(received.message).toEqual("pool is draining, new operations prohibited");
+            expect(received.message).toEqual("pool is draining, new operations prohibited");
         });
         
         await virtual_mongodb.connect();

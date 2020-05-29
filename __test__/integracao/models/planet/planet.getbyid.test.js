@@ -3,7 +3,7 @@ const virtual_mongodb = require('../../../_ultil/virtual-mongodb');
 
 let planets;
 
-describe("Metodo getById do moulo Planet",()=>{
+describe("The getById method from module Planet",()=>{
 
     beforeAll(async ()=>{
         await virtual_mongodb.connect();
@@ -12,10 +12,10 @@ describe("Metodo getById do moulo Planet",()=>{
     beforeEach(async ()=>{
         planets = {
             obj:[
-                JSON.parse(JSON.stringify(await(new planetModel({"nome": "teste31","terreno": "teste31","clima": "teste31"})).save())),
-                JSON.parse(JSON.stringify(await(new planetModel({"nome": "teste32","terreno": "teste32","clima": "teste32"})).save())),
-                JSON.parse(JSON.stringify(await(new planetModel({"nome": "teste33","terreno": "teste33","clima": "teste33"})).save())),
-                JSON.parse(JSON.stringify(await(new planetModel({"nome": "teste34","terreno": "teste34","clima": "teste34"})).save())),
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "test31","terrain": "test31","climate": "test31"})).save())),
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "test32","terrain": "test32","climate": "test32"})).save())),
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "test33","terrain": "test33","climate": "test33"})).save())),
+                JSON.parse(JSON.stringify(await(new planetModel({"name": "test34","terrain": "test34","climate": "test34"})).save())),
             ]
         }
     });
@@ -29,7 +29,7 @@ describe("Metodo getById do moulo Planet",()=>{
     });
 
 
-it('vai verificar o retorno de planet filtando por _ID', async done=>{
+it('should verify the return of the planet filtering by _ID', async done=>{
     console.log(planets);
     const expected = planets.obj[0];
 
@@ -40,7 +40,7 @@ it('vai verificar o retorno de planet filtando por _ID', async done=>{
     done();
 });
 
-it('vai verificar o retorno de planet filtrando por _ID, quando o ID esta invalido', async done=>{
+it('should verify the return of the planet filtering by _ID, when the _ID is invalid', async done=>{
     const expected = planets.obj[0];
 
     const id = expected._id.substring(0,expected._id.length-4)+'7777';
@@ -53,7 +53,7 @@ it('vai verificar o retorno de planet filtrando por _ID, quando o ID esta invali
     done();
 });
 
-it('vai verificar o retorno de planet filtando por _ID quando esta retornando erro', async done=>{
+it('should verify the return of the planet filtering by _ID, when returns error', async done=>{
     
     virtual_mongodb.disconnect();
 
