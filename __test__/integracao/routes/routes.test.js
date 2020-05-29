@@ -158,7 +158,7 @@ describe("Teste de Rota",()=>{
 
         done()
 
-    });
+    },10000);
 
     it('vai testar a rota /planet/id/:id utilizado o metodo get, com o retorno da mensagem "Não há planeta com o _id:"', async done=>{
         
@@ -196,7 +196,7 @@ describe("Teste de Rota",()=>{
 
         done();
 
-    });
+    },10000);
 
     it('vai testar a rota /planet/nome/:nome utilizado o metodo get, com o retorno da mensagem "Não há planeta com o nome:"', async done =>{
 
